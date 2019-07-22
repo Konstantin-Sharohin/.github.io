@@ -19,6 +19,7 @@ window.onload = function () {
   //Формула для розрахунку відстані
   const dist = (x1, y1, x2, y2) => Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
 
+
   //Клас "Шашка"
   class Piece {
     constructor (element, position) {
@@ -37,7 +38,6 @@ window.onload = function () {
     else
       this.player = 2;
     }
-
     //Переміщення шашки
     move(tile) {
       this.element.removeClass('selected');
@@ -56,7 +56,6 @@ window.onload = function () {
       this.element.css('top', Board.dictionary[this.position[0]]);
       this.element.css('left', Board.dictionary[this.position[1]]);
     };
-
     //Перевірка, що шашку можна з'їсти
     canJumpAny() {
       return (this.canOpponentJump([this.position[0] + 2, this.position[1] + 2]) ||
@@ -64,31 +63,30 @@ window.onload = function () {
         this.canOpponentJump([this.position[0] - 2, this.position[1] + 2]) ||
         this.canOpponentJump([this.position[0] - 2, this.position[1] - 2]))
     };
-
-    //tests if an opponent jump can be made to a specific place
+    //Перевірка можливості "з'їдання" для опонента
     canOpponentJump(newPosition) {
-      //find what the displacement is
+      //Встановлення нової позиції
       let dx = newPosition[1] - this.position[1];
       let dy = newPosition[0] - this.position[0];
-      //make sure object doesn't go backwards if not a king
-      if (this.player == 1 && this.king == false) {
+      //Перевірка неможливості ходу назад
+      if (this.player == 1) {
         if (newPosition[0] < this.position[0]) return false;
-      } else if (this.player == 2 && this.king == false) {
+      } else if (this.player == 2) {
         if (newPosition[0] > this.position[0]) return false;
       }
-      //must be in bounds
+      //Перевірка знаходження в межах дошки
       if (newPosition[0] > 7 || newPosition[1] > 7 || newPosition[0] < 0 || newPosition[1] < 0) return false;
-      //middle tile where the piece to be conquered sits
+      //Координати клітини, в якій знаходиться шашка, що буде бита
       let tileToCheckx = this.position[1] + dx / 2;
       let tileToChecky = this.position[0] + dy / 2;
       if (tileToCheckx > 7 || tileToChecky > 7 || tileToCheckx < 0 || tileToChecky < 0) return false;
-      //if there is a piece there and there is no piece in the space after that
+      //Перевірка наявності шашки в клітині та простору за нею
       if (!Board.isValidPlacetoMove(tileToChecky, tileToCheckx) && Board.isValidPlacetoMove(newPosition[0], newPosition[1])) {
-        //find which object instance is sitting there
+        //Перевірка типу об'єкту
         for (let pieceIndex in pieces) {
           if (pieces[pieceIndex].position[0] == tileToChecky && pieces[pieceIndex].position[1] == tileToCheckx) {
             if (this.player != pieces[pieceIndex].player) {
-              //return the piece sitting there
+              //Повернення з функції шашки з цієї клітини
               return pieces[pieceIndex];
             }
           }
@@ -99,7 +97,7 @@ window.onload = function () {
 
     opponentJump(tile) {
       let pieceToRemove = this.canOpponentJump(tile.position);
-      //if there is a piece to be removed, remove it
+      //Перевірка можливості видалення шашки
       if (pieceToRemove) {
         pieceToRemove.remove();
         return true;
@@ -108,40 +106,39 @@ window.onload = function () {
     };
 
     remove() {
-      //remove it and delete it from the gameboard
+      //Видалити шашку з дошки
       this.element.css("display", "none");
       Board.board[this.position[0]][this.position[1]] = 0;
-      //reset position so it doesn't get picked up by the for loop in the canOpponentJump method
       this.position = [];
     }
   };
 
+
   class Tile {
     constructor (element, position) {
-    //linked DOM element
+    //Пов'язаний елемент DOM
     this.element = element;
-    //position in gameboard
+    //Позиція на дошці
     this.position = position;
-    //if tile is in range from the piece
     }
-
+    //Перевірка, що плитка знаходиться в зоні досяжності шашки
     inRange(piece) {
       for (let k of pieces)
         if (k.position[0] == this.position[0] && k.position[1] == this.position[1]) return 'wrong';
-      if (!piece.king && piece.player == 1 && this.position[0] < piece.position[0]) return 'wrong';
-      if (!piece.king && piece.player == 2 && this.position[0] > piece.position[0]) return 'wrong';
+      if (piece.player == 1 && this.position[0] < piece.position[0]) return 'wrong';
+      if (piece.player == 2 && this.position[0] > piece.position[0]) return 'wrong';
       if (dist(this.position[0], this.position[1], piece.position[0], piece.position[1]) == Math.sqrt(2)) {
-        //regular move
+        //Звичайне переміщення
         return 'regular';
       } else if (dist(this.position[0], this.position[1], piece.position[0], piece.position[1]) == 2 * Math.sqrt(2)) {
-        //jump move
+        //"З'їдання"
         return 'jump';
       }
     }
   }
 
-  //Модель 
-  const Model = {
+  //Дані та логістика
+  const Board = {
     board: gameBoard,
     score: {
       player1: 0,
@@ -151,7 +148,7 @@ window.onload = function () {
     jumpexist: false,
     continuousjump: false,
     tilesElement: $('div.tiles'),
-    //Словник для перетворення позиції в Model.board на одиниці viewport
+    //Словник для перетворення позиції в Board.board на одиниці viewport
     dictionary: ["0vmin", "10vmin", "20vmin", "30vmin", "40vmin", "50vmin", "60vmin", "70vmin", "80vmin", "90vmin"],
     
     //Створення дошки 8x8

@@ -4,25 +4,8 @@ html, body {
   margin: 0;
   padding: 0;
   color: #333333;
-  font-family: "Lato", Calibri, sans-serif;
   font-size: 16px;
-  background-color: #3A3042;
-}
-
-.column {
-  position: relative;
-  float: left;
-  overflow: auto;
-  height: 100%;
-  min-height: 100%;
-  width: 50%; }
-
-@media screen and (max-width: 1000px) {
-  .column {
-    width: 100% !important;
-    overflow: hidden;
-    height: auto; 
-  } 
+  background-color: rgb(67, 187, 51);
 }
 
 #board {
@@ -31,9 +14,9 @@ html, body {
   left: calc(50% - 40vmin);
   width: 80vmin;
   height: 80vmin;
-  border-radius: 5px;
-  box-shadow: 1px 1px 3px #232621;
-  background-color: #B93848;
+  border-radius: 10px;
+  box-shadow: 3px 3px 15px #232621;
+  background-color: rgb(255, 255, 255);
   overflow: hidden; 
 }
 
@@ -48,7 +31,7 @@ html, body {
     position: absolute;
     width: 8vmin;
     height: 8vmin;
-    background-color: #e4a6ae;
+    background-color: #e08894;
     background-size: 65%;
     background-repeat: no-repeat;
     background-position: center;
@@ -85,5 +68,5 @@ html, body {
   }
 
   .player2pieces .piece.selected {
-    box-shadow: 0 0 10px 5px #16A8C7; 
+    box-shadow: 0 0 10px 5px rgb(22, 168, 199); 
   }
